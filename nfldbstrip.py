@@ -7,11 +7,29 @@ data = []
 URL = 'https://www.pro-football-reference.com/boxscores/202109120nwe.htm'
 page = requests.get(URL)
 soup = BeautifulSoup(page.content, 'html.parser')
-header1 = soup.find(id="div_player_offense").find_all(attrs={"data-stat": "player"})
-header = soup.find(id="div_player_offense").find_all('td') #.find_all(attrs={"data-stat": "pass_yds"})
+header = soup.find(id="div_player_offense").find_all('tr')[1]
+headers = []
+for items in header:
+    try:
+        headers.append(items.get_text())
+    except:
+        continue
+print(headers)
+
+#print(list_header)
+# teams = ["buf","mia","nwe","nyj","was","nyg","dal","phi","pit","cle","rav","cin","clt","oti","htx","jax","gnb","chi","min","det","nor","tam","atl","car","kan","rai","sdg","den","sea","ram","crd","sfo"]
+# # for getting the data
+dataFrame = pd.DataFrame(columns = headers)
+
+data = []
+URL = 'https://www.pro-football-reference.com/boxscores/202109120nwe.htm'
+page = requests.get(URL)
+soup = BeautifulSoup(page.content, 'html.parser')
+players = soup.find(id="div_player_offense").find_all(attrs={"data-stat": "player"})
+stats = soup.find(id="div_player_offense").find_all('td') #.find_all(attrs={"data-stat": "pass_yds"})
 list_header = []
 lheader1 = []
-for items in header1:
+for items in players:
     try:
         text =items.get_text()
         if text=="Player":
@@ -19,7 +37,7 @@ for items in header1:
         lheader1.append([text])
     except:
         continue
-for i,items in enumerate(header):
+for i,items in enumerate(stats):
     if i%21==0:
         list_header.append(lheader1[i//21])
     try:
@@ -27,10 +45,6 @@ for i,items in enumerate(header):
     except:
         continue
 print(lheader1)
-#print(list_header)
-# teams = ["buf","mia","nwe","nyj","was","nyg","dal","phi","pit","cle","rav","cin","clt","oti","htx","jax","gnb","chi","min","det","nor","tam","atl","car","kan","rai","sdg","den","sea","ram","crd","sfo"]
-# # for getting the data
-# dataFrame = pd.DataFrame(columns = list_header)
 # print(len(teams))
 # for team in teams:
 #     print(team)

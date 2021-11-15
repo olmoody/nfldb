@@ -35,7 +35,7 @@ newid = len(playertoid.keys())+2
 teams = ["buf","mia","nwe","nyj","was","nyg","dal","phi","pit","cle","rav","cin","clt","oti","htx","jax","gnb","chi","min","det","nor","tam","atl","car","kan","rai","sdg","den","sea","ram","crd","sfo"]
 # # for getting the data
 dataFrame = pd.DataFrame(columns = headers)
-gameheaders = ["hometeam", "awayteam", "weeknum","date","season"]
+gameheaders = ["hometeam", "awayteam", "weeknum","date","season","homescore","awayscore"]
 data = []
 games = []
 #dates = ['202109120']
@@ -67,16 +67,19 @@ for datenum,date in enumerate(dates):
             stats = stats.find_all('td')
         else:
             continue
-
         teamstable = soup.find(id="div_scoring")
-        #print(teamstable)
+
         teamheader = teamstable.find("thead").find_all("th")
         if teamstable:
             awayteam = teamheader[-2].get_text()
             hometeam = teamheader[-1].get_text()
         else:
             continue
-        gameinfo =[hometeam,awayteam,datenum//3+1,date,YEAR]
+        teamscore = soup.find_all("div",{"class":"score"})
+        if teamscore:
+            homescore = teamscore[0].get_text()
+            awayscore = teamscore[1].get_text()
+        gameinfo =[hometeam,awayteam,datenum//3+1,date,YEAR,homescore,awayscore]
         games.append(gameinfo)
 
         #print(hometeam,awayteam)
